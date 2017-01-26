@@ -1,0 +1,11 @@
+{
+	"autoload": {
+		"psr-4": {
+			"api\\": ["app/api"]
+		}
+	},
+    "require": {
+        "slim/slim": "2.*",
+        "illuminate/database": "~5.0"
+    }
+}
