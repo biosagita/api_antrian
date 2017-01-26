@@ -20,31 +20,24 @@ API Antrian
 
 
 ## KONFIGURASI DATABASE:
---------------------------
 File config ada di file "root/config/database.php"
 
 
 ## SAMPLE URL:
-----------------
-
-1. 	Request URL : http://localhost/api_antrian/v1/transaksi/next/1
+  * Request URL : http://localhost/api_antrian/v1/transaksi/next/1
 
 	Response Server :
-	----------------------------------
 	{
 	    "code": 200,
 	    "message": "Result is empty!"
 	}
-	----------------------------------
 
-2. 	Request URL : http://localhost/api_antrian/v1/transaksi/sisa/1
+  * Request URL : http://localhost/api_antrian/v1/transaksi/sisa/1
 
 	Response Server :
-	----------------------------------
 	{
 	    "code": 200,
 	    "result": {
 	        "jumlah": 0
 	    }
 	}
-	----------------------------------
