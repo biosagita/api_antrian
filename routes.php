@@ -336,7 +336,7 @@ $app->get('/v1/transaksi/finish/:addressCaller', function ($addressCaller) use (
 });
 
 //-----API v1 routes GET /v1/transaksi/nextManual/:addressCaller/:noTicket----------
-$app->get('/v1/transaksi/nextManual/:addressCaller', function ($addressCaller, $noTicket) use ($app) {
+$app->get('/v1/transaksi/nextManual/:addressCaller/:noTicket', function ($addressCaller, $noTicket) use ($app) {
 	$app->response->headers->set('Content-Type','application/json');
 
 	$data = [
