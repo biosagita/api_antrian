@@ -39,3 +39,20 @@ File config ada di file "root/config/database.php"
 	        "jumlah": 0
 	    }
 	}
+
+  * Request URL : http://localhost/api_antrian/v1/transaksi/status/1/18
+
+	Response Server :
+	{
+	    "code": 200,
+	    "noAntrian": "A4",
+	    "status": 2
+	}
+
+  * Request URL : http://localhost/api_antrian/v1/transaksi/recall/1
+
+	Response Server :
+	{
+	    "code": 200,
+	    "idTransaksi": 18
+	}
