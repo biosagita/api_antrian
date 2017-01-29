@@ -45,8 +45,10 @@ File config ada di file "root/config/database.php"
 	Response Server :
 	{
 	    "code": 200,
-	    "noAntrian": "A4",
-	    "status": 2
+	    "result": {
+	        "noAntrian": "A4",
+	        "status": 2
+	    }
 	}
 
   * Request URL : http://localhost/api_antrian/v1/transaksi/recall/1
@@ -54,5 +56,7 @@ File config ada di file "root/config/database.php"
 	Response Server :
 	{
 	    "code": 200,
-	    "idTransaksi": 18
+	    "result": {
+	        "idTransaksi": 18
+	    }
 	}

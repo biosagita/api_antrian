@@ -213,8 +213,8 @@ $app->get('/v1/transaksi/status/:addressCaller/:idTransaksi', function ($address
 
 	if($transaksi) {
 		foreach ($transaksi as $key => $value) {
-			$data['noAntrian'] = $value['no_ticket_awal'].$value['no_ticket'];
-			$data['status'] = $value['status_transaksi']; //status 0=new, 1=next, 2=sound caller, 3=skip, 5=done
+			$data['result']['noAntrian'] = $value['no_ticket_awal'].$value['no_ticket'];
+			$data['result']['status'] = $value['status_transaksi']; //status 0=new, 1=next, 2=sound caller, 3=skip, 5=done
 		}
 	} else {
 		$data['message'] = 'Result is empty!';
@@ -245,7 +245,7 @@ $app->get('/v1/transaksi/recall/:addressCaller', function ($addressCaller) use (
 
 	if($transaksi) {
 		foreach ($transaksi as $key => $value) {
-			$data['idTransaksi'] = $value['id_transaksi'];
+			$data['result']['idTransaksi'] = $value['id_transaksi'];
 		}
 	} else {
 		$data['message'] = 'Result is empty!';
