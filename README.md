@@ -6,15 +6,15 @@ API Antrian
 
 * GET /v1/transaksi/next/:addressCaller [TESTING]
 
-* GET /v1/transaksi/status/:addressCaller [ONPROGRESS]
+* GET /v1/transaksi/status/:addressCaller [TESTING]
 
-* GET /v1/transaksi/recall/:addressCaller [ONPROGRESS]
+* GET /v1/transaksi/recall/:addressCaller [TESTING]
 
-* GET /v1/transaksi/skip/:addressCaller [ONPROGRESS]
+* GET /v1/transaksi/skip/:addressCaller [TESTING]
 
-* GET /v1/transaksi/finish/:addressCaller [ONPROGRESS]
+* GET /v1/transaksi/finish/:addressCaller [TESTING]
 
-* GET /v1/transaksi/nextManual/:addressCaller [ONPROGRESS]
+* GET /v1/transaksi/nextManual/:addressCaller/:noTicket [TESTING]
 
 
 ## KONFIGURASI DATABASE:
@@ -60,3 +60,9 @@ File config ada di file "root/config/database.php"
 	        "idTransaksi": 18
 	    }
 	}
+
+  * Request URL : http://localhost/api_antrian/v1/transaksi/skip/1
+
+  * Request URL : http://localhost/api_antrian/v1/transaksi/finish/1
+
+  * Request URL : http://localhost/api_antrian/v1/transaksi/nextManual/1/1
