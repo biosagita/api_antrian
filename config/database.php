@@ -7,7 +7,7 @@ $capsule = new Capsule;
 $capsule->addConnection([
     'driver'    => 'mysql',
     'host'      => '127.0.0.1',
-    'database'  => 'db_sisan_v1.4.4_bolt',
+    'database'  => 'db_sisan_v1.4.7_mampang',
     'username'  => 'insan',
     'password'  => 'insan',
     'charset'   => 'utf8',

@@ -47,7 +47,7 @@ $app->get('/v1/transaksi/sisa/:addressCaller', function ($addressCaller) use ($a
 			->select('transaksi.no_ticket_awal', 'transaksi.no_ticket')
 			->where('transaksi.status_transaksi', 2)
 			->where('transaksi.id_caller', $value['id_caller'])
-			->where('transaksi.tanggal_transaksi', 'CURDATE() + 0')
+			->where('transaksi.tanggal_transaksi', date('Ymd'))
 			->take(1)
 			->get();
 
@@ -66,10 +66,10 @@ $app->get('/v1/transaksi/sisa/:addressCaller', function ($addressCaller) use ($a
 	->leftJoin('transaksi', 'prioritas_layanan.id_group_layanan', '=', 'transaksi.id_group_layanan')
 	->where('transaksi.status_transaksi', 0)
 	->where('caller.address_caller', $addressCaller)
-	->where('transaksi.tanggal_transaksi', 'CURDATE() + 0')
-	->count();
+	->where('transaksi.tanggal_transaksi', date('Ymd'))
+	->get();
 
-	$data['result']['jumlah'] = $sisaTransaksi;
+	$data['result']['jumlah'] = count($sisaTransaksi);
 
     $message = Helpers::convertToJSONPretty($data);
 	echo $message;
@@ -91,7 +91,7 @@ $app->get('/v1/transaksi/next/:addressCaller', function ($addressCaller) use ($a
 	->leftJoin('caller', 'transaksi.id_caller', '=', 'caller.id_caller')
 	->where('transaksi.status_transaksi', 1)
 	->where('caller.address_caller', $addressCaller)
-	->where('transaksi.tanggal_transaksi', 'CURDATE() + 0')
+	->where('transaksi.tanggal_transaksi', date('Ymd'))
 	->take(1)
 	->get();
 
@@ -108,7 +108,7 @@ $app->get('/v1/transaksi/next/:addressCaller', function ($addressCaller) use ($a
 		->leftJoin('caller', 'transaksi.id_caller', '=', 'caller.id_caller')
 		->where('transaksi.status_transaksi', 2)
 		->where('caller.address_caller', $addressCaller)
-		->where('transaksi.tanggal_transaksi', 'CURDATE() + 0')
+		->where('transaksi.tanggal_transaksi', date('Ymd'))
 		->take(1)
 		->get();
 
@@ -150,37 +150,38 @@ $app->get('/v1/transaksi/next/:addressCaller', function ($addressCaller) use ($a
 					}
 				}
 			}
+		}
 
-			//--------------Cek status transaksi = 0 pada address yang sama, bila ada maka update menjadi 1-----------
-			$transaksi = $app->db->table('transaksi')
-	    	->select('transaksi.no_ticket', 'transaksi.id_group_layanan', 'transaksi.id_transaksi', 'caller.id_caller', 'caller.id_loket')
-	    	->leftJoin('prioritas_layanan', 'transaksi.id_group_layanan', '=', 'prioritas_layanan.id_group_layanan')
-			->leftJoin('loket', 'prioritas_layanan.id_group_loket', '=', 'loket.id_group_loket')
-			->leftJoin('caller', 'loket.id_loket', '=', 'caller.id_loket')
-			->where('transaksi.status_transaksi', 0)
-			->where('caller.address_caller', $addressCaller)
-			->where('transaksi.tanggal_transaksi', 'CURDATE() + 0')
-			->orderBy('prioritas_layanan.Prioritas, transaksi.waktu_ambil')
-			->take(1)
-			->get();
+		//--------------Cek status transaksi = 0 pada address yang sama, bila ada maka update menjadi 1-----------
+		$transaksi = $app->db->table('transaksi')
+    	->select('transaksi.no_ticket', 'transaksi.id_group_layanan', 'transaksi.id_transaksi', 'caller.id_caller', 'caller.id_loket')
+    	->leftJoin('prioritas_layanan', 'transaksi.id_group_layanan', '=', 'prioritas_layanan.id_group_layanan')
+		->leftJoin('loket', 'prioritas_layanan.id_group_loket', '=', 'loket.id_group_loket')
+		->leftJoin('caller', 'loket.id_loket', '=', 'caller.id_loket')
+		->where('transaksi.status_transaksi', 0)
+		->where('caller.address_caller', $addressCaller)
+		->where('transaksi.tanggal_transaksi', date('Ymd'))
+		->orderBy('prioritas_layanan.Prioritas')
+		->orderBy('transaksi.waktu_ambil')
+		->take(1)
+		->get();
 
-			if($transaksi) {
-				foreach ($transaksi as $key => $value) {
-					$idTransaksi = $value["id_transaksi"];
-					$idCaller = $value["id_caller"];
-					$idLoket = $value["id_loket"];
+		if($transaksi) {
+			foreach ($transaksi as $key => $value) {
+				$idTransaksi = $value["id_transaksi"];
+				$idCaller = $value["id_caller"];
+				$idLoket = $value["id_loket"];
 
-	         		$res = $app->db->table('transaksi')
-					->where('id_transaksi', $idTransaksi)
-					->update([
-						'status_transaksi' => 1,
-						'waktu_panggil' => 'CURTIME()',
-						'id_caller' => $idCaller,
-						'id_loket' => $idLoket,
-					]);
+         		$res = $app->db->table('transaksi')
+				->where('id_transaksi', $idTransaksi)
+				->update([
+					'status_transaksi' => 1,
+					'waktu_panggil' => 'CURTIME()',
+					'id_caller' => $idCaller,
+					'id_loket' => $idLoket,
+				]);
 
-					$data['result']['idTransaksi'] = $idTransaksi;
-				}
+				$data['result']['idTransaksi'] = $idTransaksi;
 			}
 		} else {
 			$data['message'] = 'Result is empty!';
@@ -196,10 +197,28 @@ $app->get('/v1/transaksi/status/:addressCaller/:idTransaksi', function ($address
 	$app->response->headers->set('Content-Type','application/json');
 
 	$data = [
-		'code' => 200,
-		'noAntrian' => 'A1',
-		'status' => 1, //status 0=new, 1=next, 2=sound caller, 3=skip, 5=done
+		'code' => 200
 	];
+
+	$transaksi = $app->db->table('transaksi')
+	->select('transaksi.no_ticket_awal', 'transaksi.no_ticket', 'transaksi.status_transaksi')
+	->leftJoin('prioritas_layanan', 'transaksi.id_group_layanan', '=', 'prioritas_layanan.id_group_layanan')
+	->leftJoin('loket', 'prioritas_layanan.id_group_loket', '=', 'loket.id_group_loket')
+	->leftJoin('caller', 'loket.id_loket', '=', 'caller.id_loket')
+	->where('caller.address_caller', $addressCaller)
+	->where('transaksi.id_transaksi', $idTransaksi)
+	->where('transaksi.tanggal_transaksi', date('Ymd'))
+	->take(1)
+	->get();
+
+	if($transaksi) {
+		foreach ($transaksi as $key => $value) {
+			$data['noAntrian'] = $value['no_ticket_awal'].$value['no_ticket'];
+			$data['status'] = $value['status_transaksi']; //status 0=new, 1=next, 2=sound caller, 3=skip, 5=done
+		}
+	} else {
+		$data['message'] = 'Result is empty!';
+	}
 
     $message = Helpers::convertToJSONPretty($data);
 	echo $message;
@@ -210,9 +229,27 @@ $app->get('/v1/transaksi/recall/:addressCaller', function ($addressCaller) use (
 	$app->response->headers->set('Content-Type','application/json');
 
 	$data = [
-		'code' => 200,
-		'idTransaksi' => 1,
+		'code' => 200
 	];
+
+	$transaksi = $app->db->table('transaksi')
+	->select('transaksi.id_transaksi')
+	->leftJoin('prioritas_layanan', 'transaksi.id_group_layanan', '=', 'prioritas_layanan.id_group_layanan')
+	->leftJoin('loket', 'prioritas_layanan.id_group_loket', '=', 'loket.id_group_loket')
+	->leftJoin('caller', 'loket.id_loket', '=', 'caller.id_loket')
+	->where('caller.address_caller', $addressCaller)
+	->where('transaksi.status_transaksi', 2)
+	->where('transaksi.tanggal_transaksi', date('Ymd'))
+	->take(1)
+	->get();
+
+	if($transaksi) {
+		foreach ($transaksi as $key => $value) {
+			$data['idTransaksi'] = $value['id_transaksi'];
+		}
+	} else {
+		$data['message'] = 'Result is empty!';
+	}
 
     $message = Helpers::convertToJSONPretty($data);
 	echo $message;
