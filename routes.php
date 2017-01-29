@@ -245,7 +245,17 @@ $app->get('/v1/transaksi/recall/:addressCaller', function ($addressCaller) use (
 
 	if($transaksi) {
 		foreach ($transaksi as $key => $value) {
-			$data['result']['idTransaksi'] = $value['id_transaksi'];
+			//------update transaksi status = 2 menjadi 1 (status "next")---------
+			$idTransaksi = $value['id_transaksi'];
+
+			$res = $app->db->table('transaksi')
+			->where('id_transaksi', $idTransaksi)
+			->update([
+				'status_transaksi' => 1
+			]);
+
+			$data['result']['status'] = 'ok';
+			$data['result']['idTransaksi'] = $idTransaksi;
 		}
 	} else {
 		$data['message'] = 'Result is empty!';
@@ -286,6 +296,7 @@ $app->get('/v1/transaksi/skip/:addressCaller', function ($addressCaller) use ($a
 			]);
 
 			$data['result']['status'] = 'ok';
+			$data['result']['idTransaksi'] = $idTransaksi;
 		}
 	} else {
 		$data['message'] = 'Result is empty!';
@@ -326,6 +337,7 @@ $app->get('/v1/transaksi/finish/:addressCaller', function ($addressCaller) use (
 			]);
 
 			$data['result']['status'] = 'ok';
+			$data['result']['idTransaksi'] = $idTransaksi;
 		}
 	} else {
 		$data['message'] = 'Result is empty!';

@@ -32,34 +32,9 @@ File config ada di file "root/config/database.php"
 
   * Request URL : http://localhost/api_antrian/v1/transaksi/sisa/1
 
-	Response Server :
-	{
-	    "code": 200,
-	    "result": {
-	        "jumlah": 0
-	    }
-	}
-
   * Request URL : http://localhost/api_antrian/v1/transaksi/status/1/18
 
-	Response Server :
-	{
-	    "code": 200,
-	    "result": {
-	        "noAntrian": "A4",
-	        "status": 2
-	    }
-	}
-
   * Request URL : http://localhost/api_antrian/v1/transaksi/recall/1
-
-	Response Server :
-	{
-	    "code": 200,
-	    "result": {
-	        "idTransaksi": 18
-	    }
-	}
 
   * Request URL : http://localhost/api_antrian/v1/transaksi/skip/1
 
