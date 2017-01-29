@@ -260,9 +260,36 @@ $app->get('/v1/transaksi/skip/:addressCaller', function ($addressCaller) use ($a
 	$app->response->headers->set('Content-Type','application/json');
 
 	$data = [
-		'code' => 200,
-		'status' => 'ok',
+		'code' => 200
 	];
+
+	$transaksi = $app->db->table('transaksi')
+	->select('transaksi.id_transaksi')
+	->leftJoin('prioritas_layanan', 'transaksi.id_group_layanan', '=', 'prioritas_layanan.id_group_layanan')
+	->leftJoin('loket', 'prioritas_layanan.id_group_loket', '=', 'loket.id_group_loket')
+	->leftJoin('caller', 'loket.id_loket', '=', 'caller.id_loket')
+	->where('caller.address_caller', $addressCaller)
+	->where('transaksi.status_transaksi', 2)
+	->where('transaksi.tanggal_transaksi', date('Ymd'))
+	->take(1)
+	->get();
+
+	if($transaksi) {
+		foreach ($transaksi as $key => $value) {
+			//------update transaksi status = 2 menjadi 3 (status "skip")---------
+			$idTransaksi = $value['id_transaksi'];
+
+			$res = $app->db->table('transaksi')
+			->where('id_transaksi', $idTransaksi)
+			->update([
+				'status_transaksi' => 3
+			]);
+
+			$data['result']['status'] = 'ok';
+		}
+	} else {
+		$data['message'] = 'Result is empty!';
+	}
 
     $message = Helpers::convertToJSONPretty($data);
 	echo $message;
@@ -273,9 +300,36 @@ $app->get('/v1/transaksi/finish/:addressCaller', function ($addressCaller) use (
 	$app->response->headers->set('Content-Type','application/json');
 
 	$data = [
-		'code' => 200,
-		'status' => 'ok',
+		'code' => 200
 	];
+
+	$transaksi = $app->db->table('transaksi')
+	->select('transaksi.id_transaksi')
+	->leftJoin('prioritas_layanan', 'transaksi.id_group_layanan', '=', 'prioritas_layanan.id_group_layanan')
+	->leftJoin('loket', 'prioritas_layanan.id_group_loket', '=', 'loket.id_group_loket')
+	->leftJoin('caller', 'loket.id_loket', '=', 'caller.id_loket')
+	->where('caller.address_caller', $addressCaller)
+	->where('transaksi.status_transaksi', 2)
+	->where('transaksi.tanggal_transaksi', date('Ymd'))
+	->take(1)
+	->get();
+
+	if($transaksi) {
+		foreach ($transaksi as $key => $value) {
+			//------update transaksi status = 2 menjadi 5 (status "selesai")---------
+			$idTransaksi = $value['id_transaksi'];
+
+			$res = $app->db->table('transaksi')
+			->where('id_transaksi', $idTransaksi)
+			->update([
+				'status_transaksi' => 5
+			]);
+
+			$data['result']['status'] = 'ok';
+		}
+	} else {
+		$data['message'] = 'Result is empty!';
+	}
 
     $message = Helpers::convertToJSONPretty($data);
 	echo $message;
